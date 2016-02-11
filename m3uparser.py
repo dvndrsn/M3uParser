@@ -18,9 +18,9 @@ class track():
     ..\Minus The Bear - Planet of Ice\Minus The Bear_Planet of Ice_01_Burying Luck.mp3
 """
 
-def parseM3U(infile):
+def parsem3u(infile):
     try:
-        assert(type(infile == '_io.TextIOWrapper'))
+        assert(type(infile) == '_io.TextIOWrapper')
     except AssertionError:
         infile = open(infile,'r')
 
@@ -38,7 +38,7 @@ def parseM3U(infile):
     playlist=[]
     song=track(None,None,None)
 
-    for line in inf:
+    for line in infile:
         line=line.strip()
         if line.startswith('#EXTINF:'):
             # pull length and title from #EXTINF line
