@@ -9,20 +9,28 @@ class track():
         self.title = title
         self.path = path
 
+"""
+    song info lines are formatted like:
+    EXTINF:419,Alice In Chains - Rotten Apple
+    length (seconds)
+    Song title
+    file name - relative or absolute path of file
+    ..\Minus The Bear - Planet of Ice\Minus The Bear_Planet of Ice_01_Burying Luck.mp3
+"""
 
-# # # song info lines are formatted like:
-#EXTINF:419,Alice In Chains - Rotten Apple
-# length (seconds)
-# Song title
-# # # file name - relative or absolute path of file
-# ..\Minus The Bear - Planet of Ice\Minus The Bear_Planet of Ice_01_Burying Luck.mp3
-def parseM3U(infile):
-    inf = open(infile,'r')
+def parsem3u(infile):
+    try:
+        assert(type(infile) == '_io.TextIOWrapper')
+    except AssertionError:
+        infile = open(infile,'r')
 
-    # # # all m3u files should start with this line:
-        #EXTM3U
-    # this is not a valid M3U and we should stop..
-    line = inf.readline()
+    """
+        All M3U files start with #EXTM3U.
+        If the first line doesn't start with this, we're either
+        not working with an M3U or the file we got is corrupted.
+    """
+
+    line = infile.readline()
     if not line.startswith('#EXTM3U'):
        return
 
@@ -30,7 +38,7 @@ def parseM3U(infile):
     playlist=[]
     song=track(None,None,None)
 
-    for line in inf:
+    for line in infile:
         line=line.strip()
         if line.startswith('#EXTINF:'):
             # pull length and title from #EXTINF line
@@ -40,11 +48,10 @@ def parseM3U(infile):
             # pull song path from all other, non-blank lines
             song.path=line
             playlist.append(song)
-
             # reset the song variable so it doesn't use the same EXTINF more than once
             song=track(None,None,None)
 
-    inf.close()
+    infile.close()
 
     return playlist
 
@@ -58,4 +65,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
